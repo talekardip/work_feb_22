@@ -41,9 +41,27 @@ public class NIOServer {
                     if(key.isAcceptable()){
                         ServerSocketChannel server = (ServerSocketChannel) key.channel();
                         //create client socket
-                        SocketChannel client = server.accept();
+                        SocketChannel clientChannel = server.accept();
+                        clientChannel.configureBlocking(false);
+                        clientChannel.register(selector,SelectionKey.OP_READ);
 
                     }
+                    else if(key.isReadable()){
+                        SocketChannel client = (SocketChannel) key.channel();
+                        int bytesRead = client.read(buffer);
+                        if(bytesRead==-1){
+                            key.cancel();
+                            client.close();
+                            continue;
+                        }
+                        buffer.flip();
+                        String receivedMessage = new String(buffer.array());
+                        System.out.println("Message received: "+receivedMessage);
+
+                        client.write(buffer);
+
+                    }
+                    iter.remove();
                 }
 
 

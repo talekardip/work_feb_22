@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class MainTester {
-    public static void main(String... args) throws FileNotFoundException {
+    public static void main(String... args) throws IOException {
         String sourceFile = "testfilebufferchanneldemo.txt";
         String destinationFile = "destinationfile.txt";
         Path sourcePath = Paths.get(sourceFile);
@@ -29,7 +29,7 @@ public class MainTester {
 
     }
 
-    public static void copyChannelData(Path sourcePath,Path destinationPath){
+    public static void copyChannelData(Path sourcePath,Path destinationPath) throws IOException {
         FileChannel readChannel = null;
         ByteBuffer buffer = null;
         byte[] bytes;
@@ -66,6 +66,7 @@ public class MainTester {
 
         //Creating channel
         FileChannel writeChannel = null;
+        writeChannel.truncate(0);
         try{
             writeChannel = FileChannel.open(destinationPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             //int noOfBytesWritten = writeChannel.write(writer);
